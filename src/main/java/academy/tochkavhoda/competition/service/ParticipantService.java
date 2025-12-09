@@ -17,8 +17,9 @@ public class ParticipantService {
     public Participant addParticipant(AddParticipantRequest request) {
         Participant participant = new Participant(
                 request.getName(),
-                request.getAge(),
-                request.getCity()
+                request.getCompany(),
+                request.getLogin(),
+                request.getPassword()
         );
 
         participantDao.save(participant);
@@ -26,7 +27,6 @@ public class ParticipantService {
         return participant;
     }
 
-    // Метод получения всех участников
     public List<Participant> getParticipants() {
         return participantDao.getAll();
     }

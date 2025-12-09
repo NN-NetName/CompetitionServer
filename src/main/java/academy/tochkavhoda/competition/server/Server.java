@@ -16,8 +16,7 @@ public class Server {
     private final Gson gson;
 
     public Server() {
-        Database database = new Database();
-        ParticipantDaoImpl participantDao = new ParticipantDaoImpl(database);
+        ParticipantDaoImpl participantDao = new ParticipantDaoImpl();
         this.participantService = new ParticipantService(participantDao);
         this.gson = new Gson();
     }
