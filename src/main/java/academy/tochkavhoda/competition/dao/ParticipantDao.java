@@ -7,4 +7,6 @@ public interface ParticipantDao {
     void save(Participant participant);
 
     List<Participant> getAll();
+
+    Participant getByLogin(String login);
 }

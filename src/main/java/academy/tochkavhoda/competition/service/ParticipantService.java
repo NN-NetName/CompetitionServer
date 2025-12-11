@@ -15,6 +15,9 @@ public class ParticipantService {
     }
 
     public Participant addParticipant(AddParticipantRequest request) {
+        if (participantDao.getByLogin(request.getLogin()) != null) {
+            throw new IllegalArgumentException("User with login " + request.getLogin() + " already exists");
+        }
         Participant participant = new Participant(
                 request.getName(),
                 request.getCompany(),
@@ -23,7 +26,6 @@ public class ParticipantService {
         );
 
         participantDao.save(participant);
-
         return participant;
     }
 

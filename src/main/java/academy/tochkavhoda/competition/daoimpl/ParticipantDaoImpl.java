@@ -17,4 +17,14 @@ public class ParticipantDaoImpl implements ParticipantDao {
     public List<Participant> getAll() {
         return Database.getInstance().getParticipants();
     }
+
+    @Override
+    public Participant getByLogin(String login) {
+        for (Participant p : Database.getInstance().getParticipants()) {
+            if (p.getLogin().equals(login)) {
+                return p;
+            }
+        }
+        return null;
+    }
 }
