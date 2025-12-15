@@ -27,4 +27,15 @@ public class ExpertService {
         expertDao.save(expert);
         return expert;
     }
+
+    public Expert login(String login, String password) {
+        Expert expert = expertDao.getByLogin(login);
+        if (expert == null) {
+            throw new IllegalArgumentException("Expert not found");
+        }
+        if (!expert.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+        return expert;
+    }
 }

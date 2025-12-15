@@ -32,4 +32,15 @@ public class ParticipantService {
     public List<Participant> getParticipants() {
         return participantDao.getAll();
     }
+
+    public Participant login(String login, String password) {
+        Participant participant = participantDao.getByLogin(login);
+        if (participant == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        if (!participant.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+        return participant;
+    }
 }

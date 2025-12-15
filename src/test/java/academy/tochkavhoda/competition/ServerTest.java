@@ -11,7 +11,7 @@ public class ServerTest {
     @Test
     public void testAddParticipant() {
         Server server = new Server();
-        String jsonRequest = "{ \"name\": \"Ivan\", \"age\": 25, \"city\": \"Moscow\" }";
+        String jsonRequest = "{ \"name\": \"Ivan\", \"login\": \"ivan_test\", \"password\": \"123\", \"company\": \"IvanCo\" }";
 
         ServerResponse response = server.addParticipant(jsonRequest);
 
@@ -23,7 +23,7 @@ public class ServerTest {
     public void testGetParticipants() {
         Server server = new Server();
 
-        String jsonAdd = "{ \"name\": \"Maria\", \"age\": 30, \"city\": \"Berlin\" }";
+        String jsonAdd = "{ \"name\": \"Maria\", \"login\": \"maria_test\", \"password\": \"456\", \"company\": \"MariaDesign\" }";
         server.addParticipant(jsonAdd);
 
         ServerResponse response = server.getParticipants("{}");
@@ -44,4 +44,39 @@ public class ServerTest {
         Assertions.assertTrue(response.getResponseData().contains("Error"));
     }
 
+    @Test
+    public void testLoginSuccess() {
+        Server server = new Server();
+        server.addParticipant("{ \"name\": \"Petr\", \"login\": \"petr1\", \"password\": \"pass1\", \"company\": \"OOO Petr\" }");
+
+        ServerResponse response = server.loginParticipant("{ \"login\": \"petr1\", \"password\": \"pass1\" }");
+
+        Assertions.assertEquals(200, response.getResponseCode());
+        Assertions.assertTrue(response.getResponseData().contains("token"));
+    }
+
+    @Test
+    public void testLoginWrongPassword() {
+        Server server = new Server();
+        server.addParticipant("{ \"name\": \"Petr\", \"login\": \"petr1\", \"password\": \"pass1\", \"company\": \"OOO Petr\" }");
+
+        ServerResponse response = server.loginParticipant("{ \"login\": \"petr1\", \"password\": \"WRONG\" }");
+
+        Assertions.assertEquals(400, response.getResponseCode());
+    }
+
+    @Test
+    public void testLoginUserNotFound() {
+        Server server = new Server();
+
+        ServerResponse response = server.loginParticipant("{ \"login\": \"ghost\", \"password\": \"000\" }");
+        Assertions.assertEquals(400, response.getResponseCode());
+    }
+
+    @Test
+    public void testLogout() {
+        Server server = new Server();
+        ServerResponse response = server.logout("any-token");
+        Assertions.assertEquals(200, response.getResponseCode());
+    }
 }
