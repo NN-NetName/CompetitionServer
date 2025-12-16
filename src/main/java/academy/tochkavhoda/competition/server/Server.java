@@ -1,15 +1,19 @@
 package academy.tochkavhoda.competition.server;
 
+import academy.tochkavhoda.competition.daoimpl.ApplicationDaoImpl;
 import academy.tochkavhoda.competition.daoimpl.ExpertDaoImpl;
 import academy.tochkavhoda.competition.daoimpl.ParticipantDaoImpl;
 import academy.tochkavhoda.competition.database.Database;
+import academy.tochkavhoda.competition.dto.request.AddApplicationRequest;
 import academy.tochkavhoda.competition.dto.request.AddParticipantRequest;
 import academy.tochkavhoda.competition.dto.request.LoginRequest;
 import academy.tochkavhoda.competition.dto.request.RegisterExpertRequest;
 import academy.tochkavhoda.competition.dto.response.LoginResponse;
 import academy.tochkavhoda.competition.dto.response.ServerResponse;
+import academy.tochkavhoda.competition.model.Application;
 import academy.tochkavhoda.competition.model.Expert;
 import academy.tochkavhoda.competition.model.Participant;
+import academy.tochkavhoda.competition.service.ApplicationService;
 import academy.tochkavhoda.competition.service.ExpertService;
 import academy.tochkavhoda.competition.service.ParticipantService;
 import academy.tochkavhoda.competition.service.SessionManager;
@@ -23,6 +27,7 @@ public class Server {
     private final ExpertService expertService;
     private final Gson gson;
     private final SessionManager sessionManager;
+    private final ApplicationService applicationService;
 
     public Server() {
         ParticipantDaoImpl participantDao = new ParticipantDaoImpl();
@@ -33,6 +38,9 @@ public class Server {
 
         this.sessionManager = new SessionManager();
         this.gson = new Gson();
+
+        ApplicationDaoImpl applicationDao = new ApplicationDaoImpl();
+        this.applicationService = new ApplicationService(applicationDao, sessionManager);
     }
 
     public ServerResponse addParticipant(String requestJsonString) {
@@ -99,5 +107,18 @@ public class Server {
     public ServerResponse logout(String token) {
         sessionManager.removeSession(token);
         return new ServerResponse(200, "Logout successful");
+    }
+
+    public ServerResponse addApplication(String token, String requestJsonString) {
+        try {
+            AddApplicationRequest request = gson.fromJson(requestJsonString, AddApplicationRequest.class);
+
+            Application app = applicationService.addApplication(token, request);
+
+            String responseData = gson.toJson(app);
+            return new ServerResponse(200, responseData);
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
     }
 }

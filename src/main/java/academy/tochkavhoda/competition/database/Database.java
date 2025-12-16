@@ -1,5 +1,6 @@
 package academy.tochkavhoda.competition.database;
 
+import academy.tochkavhoda.competition.model.Application;
 import academy.tochkavhoda.competition.model.Expert;
 import academy.tochkavhoda.competition.model.Participant;
 
@@ -12,6 +13,7 @@ public class Database {
 
     private final List<Participant> participants = new ArrayList<>();
     private final List<Expert> experts = new ArrayList<>();
+    private final List<Application> applications = new ArrayList<>();
 
     private Database() {
     }
@@ -35,5 +37,12 @@ public class Database {
     }
     public List<Expert> getExperts() {
         return new ArrayList<>(experts);
+    }
+
+    public void addApplication(Application app) {
+        applications.add(app);
+    }
+    public List<Application> getApplications() {
+        return new ArrayList<>(applications);
     }
 }

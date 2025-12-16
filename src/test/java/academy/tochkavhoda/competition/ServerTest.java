@@ -79,4 +79,23 @@ public class ServerTest {
         ServerResponse response = server.logout("any-token");
         Assertions.assertEquals(200, response.getResponseCode());
     }
+
+    @Test
+    public void testCreateApplication() {
+        Server server = new Server();
+
+        server.addParticipant("{ \"name\": \"Petr\", \"login\": \"p1\", \"password\": \"123\", \"company\": \"OOO\" }");
+
+        ServerResponse loginResp = server.loginParticipant("{ \"login\": \"p1\", \"password\": \"123\" }");
+
+        String tokenJson = loginResp.getResponseData();
+        String token = tokenJson.substring(10, tokenJson.length() - 2);
+
+        String appJson = "{ \"title\": \"Super App\", \"description\": \"Best project\", \"areas\": [\"IT\"], \"requestedAmount\": 100000 }";
+
+        ServerResponse appResp = server.addApplication(token, appJson);
+
+        Assertions.assertEquals(200, appResp.getResponseCode());
+        Assertions.assertTrue(appResp.getResponseData().contains("Super App"));
+    }
 }
