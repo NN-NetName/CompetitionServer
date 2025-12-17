@@ -38,11 +38,11 @@ public class Server {
         this.sessionManager = new SessionManager();
         this.gson = new Gson();
 
-        ApplicationDaoImpl applicationDao = new ApplicationDaoImpl();
-        this.applicationService = new ApplicationService(applicationDao, sessionManager);
-
         GradeDao gradeDao = new InMemoryGradeDao(Database.getInstance());
+        ApplicationDaoImpl applicationDao = new ApplicationDaoImpl();
+
         this.gradeService = new GradeService(gradeDao, applicationDao, sessionManager);
+        this.applicationService = new ApplicationService(applicationDao, sessionManager, gradeDao);
     }
 
     public ServerResponse addParticipant(String requestJsonString) {
@@ -141,6 +141,83 @@ public class Server {
             DeleteGradeRequest request = gson.fromJson(requestJsonString, DeleteGradeRequest.class);
             gradeService.deleteGrade(token, request);
             return new ServerResponse(200, "{}");
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
+    }
+    public ServerResponse getApplicationsByAreas(String token, String requestJsonString) {
+        try {
+            FilterApplicationsRequest request = gson.fromJson(requestJsonString, FilterApplicationsRequest.class);
+
+            List<Application> apps = applicationService.getApplicationsByAreas(token, request);
+
+            return new ServerResponse(200, gson.toJson(apps));
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
+    }
+
+    public ServerResponse getGradedApplications(String token) {
+        try {
+            List<Application> apps = gradeService.getGradedApplications(token);
+
+            return new ServerResponse(200, gson.toJson(apps));
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
+    }
+
+    public ServerResponse deleteParticipant(String token, String requestJsonString) {
+        try {
+            Participant participant = (Participant) sessionManager.getUser(token);
+            if (participant == null) {
+                return new ServerResponse(400, "Error: Not authorized");
+            }
+
+            String login = participant.getLogin();
+
+            applicationService.deleteApplicationsByAuthor(login);
+
+            participantService.deleteParticipant(login);
+
+            sessionManager.removeSession(token);
+
+            return new ServerResponse(200, "Participant deleted");
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
+    }
+    public ServerResponse deleteExpert(String token, String requestJsonString) {
+        try {
+            Expert expert = (Expert) sessionManager.getUser(token);
+            if (expert == null) {
+                return new ServerResponse(400, "Error: Not authorized");
+            }
+
+            String login = expert.getLogin();
+
+            gradeService.deleteGradesByExpert(login);
+
+            expertService.deleteExpert(login);
+
+            sessionManager.removeSession(token);
+
+            return new ServerResponse(200, "Expert deleted");
+        } catch (Exception e) {
+            return new ServerResponse(400, "Error: " + e.getMessage());
+        }
+    }
+
+    public ServerResponse calculateResults(String token, String requestJsonString) {
+        try {
+            CalculateResultsRequest request = gson.fromJson(requestJsonString, CalculateResultsRequest.class);
+
+            List<Application> winners = applicationService.calculateWinners(
+                    token,
+                    request.getTotalBudget(),
+                    request.getMinThreshold()
+            );
+            return new ServerResponse(200, gson.toJson(winners));
         } catch (Exception e) {
             return new ServerResponse(400, "Error: " + e.getMessage());
         }

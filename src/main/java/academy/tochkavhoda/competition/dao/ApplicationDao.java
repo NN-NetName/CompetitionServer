@@ -7,4 +7,5 @@ public interface ApplicationDao {
     void save(Application application);
     List<Application> getAll();
     Application getById(String id);
+    void deleteAllByAuthor(String login);
 }

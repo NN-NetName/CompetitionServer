@@ -71,4 +71,16 @@ public class Database {
         grades.removeIf(g -> g.getApplicationId().equals(applicationId)
                 && g.getExpertLogin().equals(expertLogin));
     }
+    public void removeParticipant(String login) {
+        participants.removeIf(p -> p.getLogin().equals(login));
+    }
+    public void removeExpert(String login) {
+        experts.removeIf(e -> e.getLogin().equals(login));
+    }
+    public void removeApplicationsByAuthor(String login) {
+        applications.removeIf(app -> app.getParticipantId().equals(login));
+    }
+    public void removeGradesByExpert(String login) {
+        grades.removeIf(g -> g.getExpertLogin().equals(login));
+    }
 }

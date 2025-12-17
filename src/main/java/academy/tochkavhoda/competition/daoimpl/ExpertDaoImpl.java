@@ -26,4 +26,9 @@ public class ExpertDaoImpl implements ExpertDao {
         }
         return null;
     }
+
+    @Override
+    public void delete(String login) {
+        Database.getInstance().removeExpert(login);
+    }
 }

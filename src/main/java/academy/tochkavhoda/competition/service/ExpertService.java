@@ -38,4 +38,8 @@ public class ExpertService {
         }
         return expert;
     }
+
+    public void deleteExpert(String login) {
+        expertDao.delete(login);
+    }
 }

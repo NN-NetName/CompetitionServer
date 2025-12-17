@@ -43,4 +43,8 @@ public class ParticipantService {
         }
         return participant;
     }
+
+    public void deleteParticipant(String login) {
+        participantDao.delete(login);
+    }
 }

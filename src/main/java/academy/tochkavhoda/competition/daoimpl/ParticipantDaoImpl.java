@@ -27,4 +27,9 @@ public class ParticipantDaoImpl implements ParticipantDao {
         }
         return null;
     }
+
+    @Override
+    public void delete(String login) {
+        Database.getInstance().removeParticipant(login);
+    }
 }

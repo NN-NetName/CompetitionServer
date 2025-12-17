@@ -4,9 +4,13 @@ import academy.tochkavhoda.competition.dao.ApplicationDao;
 import academy.tochkavhoda.competition.dao.GradeDao;
 import academy.tochkavhoda.competition.dto.request.DeleteGradeRequest;
 import academy.tochkavhoda.competition.dto.request.SetGradeRequest;
+import academy.tochkavhoda.competition.model.Application;
 import academy.tochkavhoda.competition.model.Expert;
 import academy.tochkavhoda.competition.model.Grade;
 import academy.tochkavhoda.competition.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GradeService {
 
@@ -55,5 +59,27 @@ public class GradeService {
         Expert expert = (Expert) user;
 
         gradeDao.delete(request.getApplicationId(), expert.getLogin());
+    }
+
+    public List<Application> getGradedApplications(String token) {
+        User user = sessionManager.getUser(token);
+        if (user == null || !(user instanceof Expert)) {
+            throw new IllegalArgumentException("Only experts usage");
+        }
+
+        List<Grade> grades = gradeDao.getByExpertLogin(user.getLogin());
+
+        List<Application> result = new ArrayList<>();
+        for (Grade g : grades) {
+            Application app = applicationDao.getById(g.getApplicationId());
+            if (app != null) {
+                result.add(app);
+            }
+        }
+        return result;
+    }
+
+    public void deleteGradesByExpert(String login) {
+        gradeDao.deleteAllByExpert(login);
     }
 }

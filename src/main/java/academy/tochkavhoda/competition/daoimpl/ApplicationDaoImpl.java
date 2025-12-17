@@ -26,4 +26,9 @@ public class ApplicationDaoImpl implements ApplicationDao {
         }
         return null;
     }
+
+    @Override
+    public void deleteAllByAuthor(String login) {
+        Database.getInstance().removeApplicationsByAuthor(login);
+    }
 }
