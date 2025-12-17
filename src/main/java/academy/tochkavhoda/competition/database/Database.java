@@ -2,6 +2,7 @@ package academy.tochkavhoda.competition.database;
 
 import academy.tochkavhoda.competition.model.Application;
 import academy.tochkavhoda.competition.model.Expert;
+import academy.tochkavhoda.competition.model.Grade;
 import academy.tochkavhoda.competition.model.Participant;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Database {
     private final List<Participant> participants = new ArrayList<>();
     private final List<Expert> experts = new ArrayList<>();
     private final List<Application> applications = new ArrayList<>();
+    private final List<Grade> grades = new ArrayList<>();
 
     private Database() {
     }
@@ -44,5 +46,29 @@ public class Database {
     }
     public List<Application> getApplications() {
         return new ArrayList<>(applications);
+    }
+
+    public void addGrade(Grade grade) {
+        Grade oldGrade = null;
+        for (Grade g : grades) {
+            if (g.getApplicationId().equals(grade.getApplicationId()) &&
+                    g.getExpertLogin().equals(grade.getExpertLogin())) {
+                oldGrade = g;
+                break;
+            }
+        }
+        if (oldGrade != null) {
+            grades.remove(oldGrade);
+        }
+        grades.add(grade);
+    }
+
+    public List<Grade> getGrades() {
+        return new ArrayList<>(grades);
+    }
+
+    public void removeGrade(String applicationId, String expertLogin) {
+        grades.removeIf(g -> g.getApplicationId().equals(applicationId)
+                && g.getExpertLogin().equals(expertLogin));
     }
 }

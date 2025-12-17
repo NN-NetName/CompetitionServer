@@ -6,4 +6,5 @@ import java.util.List;
 public interface ApplicationDao {
     void save(Application application);
     List<Application> getAll();
+    Application getById(String id);
 }

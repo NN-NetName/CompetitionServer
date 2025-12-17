@@ -16,4 +16,14 @@ public class ApplicationDaoImpl implements ApplicationDao {
     public List<Application> getAll() {
         return Database.getInstance().getApplications();
     }
+
+    @Override
+    public Application getById(String id) {
+        for (Application app : Database.getInstance().getApplications()) {
+            if (app.getId().equals(id)) {
+                return app;
+            }
+        }
+        return null;
+    }
 }
