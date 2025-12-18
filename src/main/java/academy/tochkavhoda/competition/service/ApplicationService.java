@@ -9,6 +9,7 @@ import academy.tochkavhoda.competition.model.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class ApplicationService {
 
@@ -33,7 +34,7 @@ public class ApplicationService {
         }
 
         Application app = new Application(
-                user.getLogin(),
+                (Participant) user,
                 request.getTitle(),
                 request.getDescription(),
                 request.getAreas(),
@@ -53,7 +54,7 @@ public class ApplicationService {
         List<Application> allApps = applicationDao.getAll();
         List<Application> result = new ArrayList<>();
 
-        List<String> filterAreas = request.getAreas();
+        Set<String> filterAreas = request.getAreas();
         if (filterAreas == null || filterAreas.isEmpty()) {
             filterAreas = ((Expert) user).getAreas();
         }
@@ -93,7 +94,7 @@ public class ApplicationService {
             int count = 0;
 
             for (Grade g : grades) {
-                if (g.getApplicationId().equals(app.getId())) {
+                if (g.getApplication().getId().equals(app.getId())) {
                     sum += g.getValue();
                     count++;
                 }

@@ -4,18 +4,21 @@ import academy.tochkavhoda.competition.model.Application;
 import academy.tochkavhoda.competition.model.Expert;
 import academy.tochkavhoda.competition.model.Grade;
 import academy.tochkavhoda.competition.model.Participant;
+import academy.tochkavhoda.competition.model.User;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Database {
 
     private static Database instance;
 
-    private final List<Participant> participants = new ArrayList<>();
-    private final List<Expert> experts = new ArrayList<>();
-    private final List<Application> applications = new ArrayList<>();
-    private final List<Grade> grades = new ArrayList<>();
+    private final Map<String, User> users = new HashMap<>();
+    private final Map<String, Application> applications = new HashMap<>();
+    private final Map<String, Grade> grades = new HashMap<>();
 
     private Database() {
     }
@@ -27,60 +30,62 @@ public class Database {
         return instance;
     }
 
-    public void addParticipant(Participant participant) {
-        participants.add(participant);
+    public void addUser(User user) {
+        users.put(user.getLogin(), user);
     }
-    public List<Participant> getParticipants() {
-        return new ArrayList<>(participants);
+    public User getUser(String login) {
+        return users.get(login);
+    }
+    public void removeUser(String login) {
+        users.remove(login);
     }
 
-    public void addExpert(Expert expert) {
-        experts.add(expert);
+    public Collection<Participant> getParticipants() {
+        return users.values().stream()
+                .filter(u -> u instanceof Participant)
+                .map(u -> (Participant) u)
+                .collect(Collectors.toList());
     }
-    public List<Expert> getExperts() {
-        return new ArrayList<>(experts);
+
+    public Collection<Expert> getExperts() {
+        return users.values().stream()
+                .filter(u -> u instanceof Expert)
+                .map(u -> (Expert) u)
+                .collect(Collectors.toList());
     }
 
     public void addApplication(Application app) {
-        applications.add(app);
+        applications.put(app.getId(), app);
     }
-    public List<Application> getApplications() {
-        return new ArrayList<>(applications);
+
+    public Collection<Application> getApplications() {
+        return new ArrayList<>(applications.values());
+    }
+
+    public Application getApplicationById(String id) {
+        return applications.get(id);
+    }
+
+    public void removeApplicationsByAuthor(String login) {
+        applications.values().removeIf(app -> {
+            return app.getParticipant().equals(login);
+        });
     }
 
     public void addGrade(Grade grade) {
-        Grade oldGrade = null;
-        for (Grade g : grades) {
-            if (g.getApplicationId().equals(grade.getApplicationId()) &&
-                    g.getExpertLogin().equals(grade.getExpertLogin())) {
-                oldGrade = g;
-                break;
-            }
-        }
-        if (oldGrade != null) {
-            grades.remove(oldGrade);
-        }
-        grades.add(grade);
+        String key = grade.getApplication().getId() + "_" + grade.getExpert().getLogin();
+        grades.put(key, grade);
     }
 
-    public List<Grade> getGrades() {
-        return new ArrayList<>(grades);
+    public Collection<Grade> getGrades() {
+        return new ArrayList<>(grades.values());
     }
 
     public void removeGrade(String applicationId, String expertLogin) {
-        grades.removeIf(g -> g.getApplicationId().equals(applicationId)
-                && g.getExpertLogin().equals(expertLogin));
-    }
-    public void removeParticipant(String login) {
-        participants.removeIf(p -> p.getLogin().equals(login));
-    }
-    public void removeExpert(String login) {
-        experts.removeIf(e -> e.getLogin().equals(login));
-    }
-    public void removeApplicationsByAuthor(String login) {
-        applications.removeIf(app -> app.getParticipantId().equals(login));
+        String key = applicationId + "_" + expertLogin;
+        grades.remove(key);
     }
     public void removeGradesByExpert(String login) {
-        grades.removeIf(g -> g.getExpertLogin().equals(login));
+        grades.values().removeIf(g -> g.getExpert().getLogin().equals(login));
     }
 }

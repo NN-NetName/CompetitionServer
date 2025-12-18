@@ -22,7 +22,7 @@ public class InMemoryGradeDao implements GradeDao {
 
     @Override
     public List<Grade> getAll() {
-        return database.getGrades();
+        return new ArrayList<>(database.getGrades());
     }
 
     @Override
@@ -34,7 +34,7 @@ public class InMemoryGradeDao implements GradeDao {
     public List<Grade> getByExpertLogin(String login) {
         List<Grade> result = new ArrayList<>();
         for (Grade g : database.getGrades()) {
-            if (g.getExpertLogin().equals(login)) {
+            if (g.getExpert().getLogin().equals(login)) {
                 result.add(g);
             }
         }
@@ -43,6 +43,6 @@ public class InMemoryGradeDao implements GradeDao {
 
     @Override
     public void deleteAllByExpert(String login) {
-        Database.getInstance().removeGradesByExpert(login);
+        database.removeGradesByExpert(login);
     }
 }

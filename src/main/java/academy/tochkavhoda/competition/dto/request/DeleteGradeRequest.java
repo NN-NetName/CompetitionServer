@@ -1,5 +1,5 @@
 package academy.tochkavhoda.competition.dto.request;
-
+// Нарушена clean architecture (deleteGrade)
 public class DeleteGradeRequest {
     private String applicationId;
 

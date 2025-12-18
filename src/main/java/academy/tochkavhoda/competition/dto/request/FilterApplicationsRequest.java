@@ -1,22 +1,22 @@
 package academy.tochkavhoda.competition.dto.request;
 
-import java.util.List;
+import java.util.Set;
 
 public class FilterApplicationsRequest {
-    private List<String> areas; // Список направлений для фильтрации
+    private Set<String> areas;
 
     public FilterApplicationsRequest() {
     }
 
-    public FilterApplicationsRequest(List<String> areas) {
+    public FilterApplicationsRequest(Set<String> areas) {
         this.areas = areas;
     }
 
-    public List<String> getAreas() {
+    public Set<String> getAreas() {
         return areas;
     }
 
-    public void setAreas(List<String> areas) {
+    public void setAreas(Set<String> areas) {
         this.areas = areas;
     }
 }

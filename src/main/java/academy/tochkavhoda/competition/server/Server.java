@@ -26,7 +26,7 @@ public class Server {
     private final Gson gson;
     private final SessionManager sessionManager;
     private final ApplicationService applicationService;
-    private final GradeService gradeService; //
+    private final GradeService gradeService;
 
     public Server() {
         ParticipantDaoImpl participantDao = new ParticipantDaoImpl();
@@ -35,7 +35,7 @@ public class Server {
         ExpertDaoImpl expertDao = new ExpertDaoImpl();
         this.expertService = new ExpertService(expertDao);
 
-        this.sessionManager = new SessionManager();
+        this.sessionManager = SessionManager.getInstance();
         this.gson = new Gson();
 
         GradeDao gradeDao = new InMemoryGradeDao(Database.getInstance());
@@ -139,7 +139,7 @@ public class Server {
     public ServerResponse deleteGrade(String token, String requestJsonString) {
         try {
             DeleteGradeRequest request = gson.fromJson(requestJsonString, DeleteGradeRequest.class);
-            gradeService.deleteGrade(token, request);
+            gradeService.deleteGrade(token, request.getApplicationId());
             return new ServerResponse(200, "{}");
         } catch (Exception e) {
             return new ServerResponse(400, "Error: " + e.getMessage());

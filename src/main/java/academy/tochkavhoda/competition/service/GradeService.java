@@ -36,18 +36,19 @@ public class GradeService {
 
         Expert expert = (Expert) user;
 
-        if (applicationDao.getById(request.getApplicationId()) == null) {
+        Application application = applicationDao.getById(request.getApplicationId());
+        if (application == null) {
             throw new IllegalArgumentException("Application not found");
         }
         if (request.getValue() < 1 || request.getValue() > 5) {
             throw new IllegalArgumentException("Grade value must be between 1 and 5");
         }
 
-        Grade grade = new Grade(request.getApplicationId(), expert.getLogin(), request.getValue());
+        Grade grade = new Grade(application, expert, request.getValue());
         gradeDao.save(grade);
     }
 
-    public void deleteGrade(String token, DeleteGradeRequest request) {
+    public void deleteGrade(String token, String applicationId) {
         User user = sessionManager.getUser(token);
         if (user == null) {
             throw new IllegalArgumentException("Not authorized");
@@ -58,7 +59,7 @@ public class GradeService {
 
         Expert expert = (Expert) user;
 
-        gradeDao.delete(request.getApplicationId(), expert.getLogin());
+        gradeDao.delete(applicationId, expert.getLogin());
     }
 
     public List<Application> getGradedApplications(String token) {
@@ -71,7 +72,7 @@ public class GradeService {
 
         List<Application> result = new ArrayList<>();
         for (Grade g : grades) {
-            Application app = applicationDao.getById(g.getApplicationId());
+            Application app = applicationDao.getById(g.getApplication().getId());
             if (app != null) {
                 result.add(app);
             }

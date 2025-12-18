@@ -1,25 +1,31 @@
 package academy.tochkavhoda.competition.model;
 
 public class Grade {
-    private String applicationId;
-    private String expertLogin;
+    private Application application;
+    private Expert expert;
     private int value;
 
     public Grade() {
     }
 
-    public Grade(String applicationId, String expertLogin, int value) {
-        this.applicationId = applicationId;
-        this.expertLogin = expertLogin;
+    public Grade(Application application, Expert expert, int value) {
+        this.application = application;
+        this.expert = expert;
         this.value = value;
     }
 
-    public String getApplicationId() { return applicationId; }
-    public void setApplicationId(String applicationId) { this.applicationId = applicationId; }
+    public Application getApplication() { return application; }
+    public void setApplication(Application application) { this.application = application; }
 
-    public String getExpertLogin() { return expertLogin; }
-    public void setExpertLogin(String expertLogin) { this.expertLogin = expertLogin; }
+    public Expert getExpert() { return expert; }
 
-    public int getValue() { return value; }
+    public void setExpert(Expert expert) { this.expert = expert; }
+
+    public int getValue() {
+        if (value < 1 || value > 5) {
+            throw new IllegalArgumentException("Grade value must be between 1 and 5");
+        }
+        return value;
+    }
     public void setValue(int value) { this.value = value; }
 }
